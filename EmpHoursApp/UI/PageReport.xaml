@@ -1,0 +1,113 @@
+﻿<Page x:Class="EmpHoursApp.UI.PageReport"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"      
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EmpHoursApp.UI"
+      mc:Ignorable="d" 
+      d:DesignHeight="550" d:DesignWidth="1000"
+      Title="PageReport">
+
+    <Grid>
+        <Grid.Resources>
+            <Style x:Key="textStyleDatePicker" TargetType="DatePicker">
+                <Setter Property="Foreground" Value="#333333" />
+                <Setter Property="Width" Value="auto" />
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>            
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25">List of Employee TotalHours</TextBlock>
+        
+        <!--Match the Name in the xaml.cs file-->
+        <ListView Name="ListOfEmployeeTotalHours" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=Employees}" Margin="10" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="EmpId" DisplayMemberBinding="{Binding Path=EmpId}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="FirstName" DisplayMemberBinding="{Binding Path=FirstName}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="LastName" DisplayMemberBinding="{Binding Path=LastName}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Path=Email}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="Dob" DisplayMemberBinding="{Binding Path=Dob, StringFormat='yyyy-MM-dd'}" ></GridViewColumn>
+                    <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding Path=Phone}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="TotalHours" DisplayMemberBinding="{Binding Path=TotalHours}"  Width="auto"></GridViewColumn>                   
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25">Select Dates</TextBlock>
+        <StackPanel Grid.Column="1" Grid.Row="1" Margin="10">
+            <DockPanel Margin="5" >
+                <Label DockPanel.Dock="Top" >BeginDate</Label>
+                <!--<DatePicker Name="beginDate" DisplayDate="{x:Static sys:DateTime.Now}" SelectedDate="{Binding Path=BeginDate, StringFormat='yyyy-MM-dd'}" Margin="5"></DatePicker>-->
+                <DatePicker Name="beginDate" Style="{StaticResource textStyleDatePicker}" DisplayDate="{x:Static sys:DateTime.Now}" Margin="5">
+                    <DatePicker.SelectedDate>
+                        <Binding Path="BeginDate" StringFormat='yyyy-MM-dd'>
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                                <DataErrorValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DatePicker.SelectedDate>
+                </DatePicker>
+            </DockPanel>
+
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top" >EndDate</Label>
+                <!--<DatePicker Name="endDate" DisplayDate="{x:Static sys:DateTime.Now}" SelectedDate="{Binding Path=EndDate, StringFormat='yyyy-MM-dd'}" Margin="5"></DatePicker>-->
+                <DatePicker Name="endDate" Style="{StaticResource textStyleDatePicker}" DisplayDate="{x:Static sys:DateTime.Now}" Margin="5">
+                    <DatePicker.SelectedDate>
+                        <Binding Path="EndDate" StringFormat='yyyy-MM-dd'>
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                                <DataErrorValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DatePicker.SelectedDate>
+                </DatePicker>
+            </DockPanel>
+            <DockPanel Margin="5">
+                <!--<Button Content="Calculate Total Hours for the period" Click="btnCalculateTotalHoursForThePeriod" Margin="10"></Button>-->
+                <Button Content="Calculate Total Hours for the period"
+		        Click="btnCalculateTotalHoursForThePeriod"		                                 
+                IsDefault="True"
+		        Margin="10"
+                Command="{Binding SaveProtocolCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="IsEnabled" Value="False"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=(Validation.HasError), ElementName=beginDate}" Value="False"/>
+                                        <Condition Binding="{Binding Path=(Validation.HasError), ElementName=endDate}" Value="False"/>
+                                        
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="IsEnabled" Value="True"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+
+            </DockPanel>
+            <DockPanel Margin="5">
+                <Button Content="(re)Load the table" Margin="10" Click="btnReloadTable_Click"></Button>
+            </DockPanel>
+        </StackPanel>
+
+    </Grid>
+</Page>

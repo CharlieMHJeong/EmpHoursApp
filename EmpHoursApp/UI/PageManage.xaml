@@ -1,0 +1,256 @@
+﻿<Page x:Class="EmpHoursApp.UI.PageManage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:local="clr-namespace:EmpHoursApp.UI"
+      xmlns:Behaviors="clr-namespace:EmpHoursApp.UI"
+      xmlns:dxmvvm="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:system="clr-namespace:System;assembly=mscorlib"
+      xmlns:validationRules="clr-namespace:EmpHoursApp.UI"
+      mc:Ignorable="d" 
+      d:DesignHeight="550" d:DesignWidth="1000"
+      Title="PageManage">
+
+    <Grid>
+        <Grid.Resources>
+            <Style x:Key="textStyleTextBox" TargetType="TextBox">
+                <Setter Property="Foreground" Value="#333333" />
+                <Setter Property="MaxLength" Value="40" />
+                <Setter Property="Width" Value="auto" />
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="textStyleDatePicker" TargetType="DatePicker">
+                <Setter Property="Foreground" Value="#333333" />                
+                <Setter Property="Width" Value="auto" />
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25">List of Employees</TextBlock>
+        <!--Match the Name in the xaml.cs file-->
+        <ListView Name="ListOfEmployees" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=Employees}" Margin="10">
+            <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListofEmployoees_MouseDoubleClckHandler"/>
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>                    
+                    <GridViewColumn Header="EmpId" DisplayMemberBinding="{Binding Path=EmpId}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="FirstName" DisplayMemberBinding="{Binding Path=FirstName}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="LastName" DisplayMemberBinding="{Binding Path=LastName}"  Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="TotalHours" DisplayMemberBinding="{Binding Path=TotalHours}"  Width="auto"></GridViewColumn>
+                    
+                </GridView>
+            </ListView.View>
+        </ListView>        
+        <Button Grid.Row="2" Grid.Column="0" x:Name="RefreshEmployeesFromDB" Content="Reload Table" HorizontalAlignment="Left" Margin="10" Width="150" Click="btnReloadTable_Click"/>
+        
+        
+        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25">Update Details</TextBlock>
+        <!--Match the Name in the xaml.cs file-->
+        <StackPanel Name="StackPanelUpdateDetails" Grid.Row="1" Grid.Column="1" Margin="10">
+            <!--<StackPanel.Resources>
+                <Style x:Key="textStyleTextBox" TargetType="TextBox">
+                    <Setter Property="Foreground" Value="#333333" />
+                    <Setter Property="MaxLength" Value="40" />
+                    <Setter Property="Width" Value="392" />
+                    <Style.Triggers>
+                        <Trigger Property="Validation.HasError" Value="true">
+                            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Resources>-->
+
+            <DockPanel LastChildFill="True" Margin="5">
+                <Label DockPanel.Dock="Left">Employee ID: </Label>
+                <!--<TextBlock Name="euEmpId" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=EmpId}" VerticalAlignment="Center"></TextBlock>-->
+                <TextBlock Name="euEmpId" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=EmpId}" VerticalAlignment="Center"></TextBlock>
+            </DockPanel>
+            
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">First Name: </Label>
+                <!--<TextBox Name="euFirstName" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=FirstName}"></TextBox>-->
+                <TextBox Style="{StaticResource textStyleTextBox}" Name="euFirstName">
+                    <Binding Path="FirstName" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <ExceptionValidationRule/>
+                            <DataErrorValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox>
+
+            </DockPanel>
+            
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">Last Name:</Label>
+                <!--<TextBox Name="euLastName" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=LastName}"  ></TextBox>-->
+                <TextBox Style="{StaticResource textStyleTextBox}" Name="euLastName">
+                    <Binding Path="LastName" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <ExceptionValidationRule/>
+                            <DataErrorValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox>
+            </DockPanel>
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">Email:</Label>
+                <!--<TextBox Name="euEmail" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=Email}"  ></TextBox>-->
+                <TextBox Style="{StaticResource textStyleTextBox}" Name="euEmail">
+                    <Binding Path="Email" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <ExceptionValidationRule/>
+                            <DataErrorValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox>
+            </DockPanel>
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">Dob:</Label>
+                <!--<DatePicker Name="euDob" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" SelectedDate="{Binding Path=Dob, StringFormat='yyyy-MM-dd'}" ></DatePicker>-->
+                <!--<DatePicker Style="{StaticResource textStyleDatePicker}" Name="euDob" SelectedDate="{Binding Path=Dob, StringFormat='yyyy-MM-dd', UpdateSourceTrigger=PropertyChanged}">                    
+                </DatePicker>-->
+                <DatePicker Name="euDob" Style="{StaticResource textStyleDatePicker}" >
+                    <DatePicker.SelectedDate>
+                        <Binding Path="Dob" StringFormat='yyyy-MM-dd'>
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                                <DataErrorValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DatePicker.SelectedDate>
+                </DatePicker>
+                
+            </DockPanel>
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">Phone:</Label>
+                <!--<TextBox Name="euPhone" DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=Phone}"  ></TextBox>-->
+                <TextBox Style="{StaticResource textStyleTextBox}" Name="euPhone">
+                    <Binding Path="Phone" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <ExceptionValidationRule/>
+                            <DataErrorValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox>
+            </DockPanel>
+            
+            
+            <!--<Button Width="150" Margin="10" Click="btnSaveChanges_Click" HorizontalAlignment="Left">Save Changes</Button>-->
+            <Button Content="Save Changes"
+		        Click="btnSaveChanges_Click"		
+                HorizontalAlignment="Left"        
+                Width="150"
+                IsDefault="True"
+		        Margin="10"
+                Command="{Binding SaveProtocolCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euFirstName}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euLastName}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euEmail}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euPhone}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euDob}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Width="150" Margin="10" Click="btnClear_Click" HorizontalAlignment="Left">Clear</Button>            
+        </StackPanel>
+        
+        
+        <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25">Add Working Hours</TextBlock>
+        <StackPanel Grid.Row="1" Grid.Column="2">
+            <DockPanel LastChildFill="True" Margin="5">
+                <Label DockPanel.Dock="Left" >Employee ID: </Label>
+                <!--<TextBlock DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=EmpId}" VerticalAlignment="Center"></TextBlock>-->
+                <TextBlock DataContext="{Binding ElementName=ListOfEmployees, Path=SelectedItem}" Text="{Binding Path=EmpId}" VerticalAlignment="Center">
+                </TextBlock>
+            </DockPanel>
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">WorkDate</Label>
+                <!--<DatePicker Name="euWorkDate" DisplayDate="{x:Static sys:DateTime.Now}" SelectedDate="{Binding Path=WorkDate, StringFormat='yyyy-MM-dd'}"></DatePicker>-->
+                <DatePicker Name="euWorkDate" Style="{StaticResource textStyleDatePicker}" >
+                    <DatePicker.SelectedDate>
+                        <Binding Path="WorkDate" StringFormat='yyyy-MM-dd'>
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule/>
+                                <DataErrorValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DatePicker.SelectedDate>
+                </DatePicker>
+            </DockPanel>
+
+            <DockPanel Margin="5">
+                <Label DockPanel.Dock="Top">Hours</Label>
+                <!--<TextBox Name="euHours" Text="{Binding Path=Hours}"  StringFormat="{}{##.##}" ></TextBox>  -->
+                <TextBox Style="{StaticResource textStyleTextBox}" Name="euHours" PreviewTextInput="TextBox_PreviewTextInput">
+                    <Binding Path="Hours" UpdateSourceTrigger="PropertyChanged" Delay="1000">
+                        <Binding.ValidationRules>
+                            <ExceptionValidationRule/>
+                            <DataErrorValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox>
+
+            </DockPanel>
+            <!--<Button Width="150" Margin="10" Click="btnRecordHours_Click" HorizontalAlignment="Left">Record Hours</Button>-->
+            <Button Content="Record Hours"
+		        Click="btnRecordHours_Click"		
+                HorizontalAlignment="Left"        
+                Width="150"
+                IsDefault="True"
+		        Margin="10"
+                Command="{Binding SaveProtocolCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euHours}" Value="False"/>
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=euWorkDate}" Value="False"/>
+                                    
+
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+    </Grid>
+</Page>

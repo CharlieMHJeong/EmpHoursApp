@@ -1,0 +1,28 @@
+﻿<Window x:Class="EmpHoursApp.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:HamburgerMenu="clr-namespace:HamburgerMenu;assembly=HamburgerMenu"
+        xmlns:local="clr-namespace:EmpHoursApp.UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="550" Width="1000">
+    <Grid Background="LightSteelBlue">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <HamburgerMenu:HamburgerMenu Grid.Column="0" Background="SteelBlue" MenuItemForeground="White" HorizontalAlignment="Left">
+            <HamburgerMenu:HamburgerMenu.Content>
+
+                <HamburgerMenu:HamburgerMenuItem Text="Add" MouseDoubleClick="HamburgerMenuItem_MouseDoubleClick"/>
+                <HamburgerMenu:HamburgerMenuItem Text="Manage" MouseDoubleClick="HamburgerMenuItem_MouseDoubleClick"/>
+                <HamburgerMenu:HamburgerMenuItem Text="Report" MouseDoubleClick="HamburgerMenuItem_MouseDoubleClick"/>
+
+            </HamburgerMenu:HamburgerMenu.Content>
+        </HamburgerMenu:HamburgerMenu>
+        <Frame x:Name="ContentFrame" Grid.Column="1" Background="LightSteelBlue" Source="PageManage.xaml" NavigationUIVisibility="Hidden">
+
+        </Frame>
+    </Grid>
+</Window>
